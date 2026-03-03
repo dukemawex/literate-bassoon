@@ -1,0 +1,105 @@
+name: Repo Health Check
+
+on:
+  schedule:
+    # Run every day at 06:00 UTC
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      print_report:
+        description: "Print human-readable report to workflow log"
+        required: false
+        default: "true"
+        type: boolean
+
+permissions:
+  contents: write   # needed to commit the updated README table back
+
+jobs:
+  health-check:
+    name: Check repo health
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout meta-repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests pyyaml
+
+      - name: Run health check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ARGS="--output artifacts/health_report.json"
+          if [ "${{ github.event.inputs.print_report }}" = "true" ]; then
+            ARGS="$ARGS --print"
+          fi
+          python scripts/health_check.py $ARGS
+
+      - name: Update README health table
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python - <<'PYEOF'
+          import json, textwrap
+          from pathlib import Path
+
+          report = json.loads(Path("artifacts/health_report.json").read_text())
+
+          rows = []
+          for r in report["repos"]:
+              name   = r["repo"].split("/")[-1]
+              exists = "✅" if r["exists"]         else "❌"
+              act    = "✅" if r["actions_enabled"] else "❌"
+              pages  = "✅" if r["pages_enabled"]   else "❌"
+              url    = f"[link]({r['pages_url']})" if r["pages_url"] else "—"
+              errors = ", ".join(r["errors"]) if r["errors"] else "—"
+              rows.append(f"| {name} | {exists} | {act} | {pages} | {url} | {errors} |")
+
+          table = textwrap.dedent(f"""\
+          <!-- HEALTH_TABLE_START -->
+          > Last updated: {report['generated_at']}
+
+          | Repository | Exists | Actions | Pages | Pages URL | Notes |
+          |---|:---:|:---:|:---:|---|---|
+          {chr(10).join(rows)}
+          <!-- HEALTH_TABLE_END -->""")
+
+          readme = Path("README.md").read_text()
+          import re
+          new_readme = re.sub(
+              r"<!-- HEALTH_TABLE_START -->.*?<!-- HEALTH_TABLE_END -->",
+              table,
+              readme,
+              flags=re.DOTALL,
+          )
+          Path("README.md").write_text(new_readme)
+          print("README.md health table updated.")
+          PYEOF
+
+      - name: Commit updated files
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add artifacts/health_report.json README.md
+          if git diff --cached --quiet; then
+            echo "Nothing to commit – health data unchanged."
+          else
+            git commit -m "chore: update health report and README table [skip ci]"
+            git push
+          fi
+
+      - name: Upload health report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-report
+          path: artifacts/health_report.json
+          retention-days: 90

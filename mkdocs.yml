@@ -1,0 +1,47 @@
+site_name: Research Product Lab
+site_url: https://dukemawex.github.io/literate-bassoon/
+site_description: Meta-repo dashboard for the 15 Research Product Lab child repositories.
+site_author: dukemawex
+
+repo_name: dukemawex/literate-bassoon
+repo_url: https://github.com/dukemawex/literate-bassoon
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Health Dashboard: health.md
+  - Contributing: contributing.md
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+
+plugins:
+  - search
