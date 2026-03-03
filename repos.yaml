@@ -1,0 +1,66 @@
+# repos.yaml
+# Lists the 15 child repositories tracked by this meta-repo.
+# Each entry includes the repo name, a short description, and the expected GitHub Pages URL pattern.
+
+owner: dukemawex
+
+repos:
+  - name: research-core
+    description: Core research utilities and shared libraries used across all projects.
+    pages_url: https://dukemawex.github.io/research-core/
+
+  - name: data-pipeline
+    description: ETL pipeline for ingesting, transforming, and loading research datasets.
+    pages_url: https://dukemawex.github.io/data-pipeline/
+
+  - name: ml-models
+    description: Machine-learning model training, evaluation, and versioning toolkit.
+    pages_url: https://dukemawex.github.io/ml-models/
+
+  - name: api-gateway
+    description: Unified REST/GraphQL gateway exposing internal research services.
+    pages_url: https://dukemawex.github.io/api-gateway/
+
+  - name: frontend-app
+    description: React-based web application for exploring and visualising research outputs.
+    pages_url: https://dukemawex.github.io/frontend-app/
+
+  - name: auth-service
+    description: Authentication and authorisation microservice (OAuth2 / JWT).
+    pages_url: https://dukemawex.github.io/auth-service/
+
+  - name: data-storage
+    description: Abstraction layer for structured and unstructured research data storage.
+    pages_url: https://dukemawex.github.io/data-storage/
+
+  - name: analytics-engine
+    description: Real-time analytics engine for aggregating experiment metrics.
+    pages_url: https://dukemawex.github.io/analytics-engine/
+
+  - name: report-generator
+    description: Automated PDF/HTML report generation from experiment results.
+    pages_url: https://dukemawex.github.io/report-generator/
+
+  - name: notification-service
+    description: Event-driven notification service (email, Slack, webhook).
+    pages_url: https://dukemawex.github.io/notification-service/
+
+  - name: config-manager
+    description: Centralised configuration management and secrets distribution.
+    pages_url: https://dukemawex.github.io/config-manager/
+
+  - name: testing-framework
+    description: Shared test fixtures, mocks, and integration-test harness.
+    pages_url: https://dukemawex.github.io/testing-framework/
+
+  - name: deployment-tools
+    description: Infrastructure-as-code and Helm charts for Kubernetes deployments.
+    pages_url: https://dukemawex.github.io/deployment-tools/
+
+  - name: documentation-hub
+    description: Aggregated documentation site built from all child-repo doc sources.
+    pages_url: https://dukemawex.github.io/documentation-hub/
+
+  - name: monitoring-dashboard
+    description: Grafana dashboards and alerting rules for platform observability.
+    pages_url: https://dukemawex.github.io/monitoring-dashboard/
